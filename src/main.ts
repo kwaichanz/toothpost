@@ -10,10 +10,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const start = async () => {
-    console.log("Starting up...");
+  console.log("Starting up...");
   if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined");
-    console.log(process.env.MONGO_URI);
-    console.log("Connecting to MongoDB...");
+  console.log(process.env.MONGO_URI);
+  console.log("Connecting to MongoDB...");
   try {
     await mongoose.connect(process.env.MONGO_URI);
   } catch (err) {
