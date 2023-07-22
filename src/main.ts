@@ -9,6 +9,12 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+declare global {
+  interface CustomError extends Error {
+    status?: number;
+  }
+}
+
 const start = async () => {
   console.log("Starting up...");
   if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined");
