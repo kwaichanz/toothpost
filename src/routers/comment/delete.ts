@@ -34,8 +34,8 @@ router.delete(
     } catch (err) {
       next(new Error("post cannot be updated"));
     }
-    
+
   }
 );
 
-export { router as deletePostRouter };
+export { router as deleteCommentRouter };

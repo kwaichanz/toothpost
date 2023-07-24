@@ -18,19 +18,19 @@ router.post(
     }
 
     const newComment = new Comment({
-      content,
       userName: userName ? userName : "anonymous",
+      content,
     });
 
     await newComment.save();
-
-    const updatedPost = Post.findOneAndUpdate(
+    
+    const updatedPost = await Post.findOneAndUpdate(
       { _id: postId },
       { $push: { comments: newComment } },
       { new: true }
     );
 
-    res.status(200).send(updatedPost);
+    res.status(201).send(updatedPost);
   }
 );
 

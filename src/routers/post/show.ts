@@ -4,10 +4,10 @@ import Post from "../../models/post";
 
 const router = Router();
 
-router.post(
-  "/api/post/show",
+router.get(
+  "/api/post/show/:id",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.body;
+    const { id } = req.params;
 
     if (!id) {
       const allPost = await Post.find();
@@ -15,7 +15,7 @@ router.post(
     }
 
     try {
-      const post = await Post.findOne({ _id: id });
+      const post = await Post.findOne({ _id: id }).populate('comments')
 
       return res.status(200).send(post);
     } catch (err) {
@@ -23,3 +23,5 @@ router.post(
     }
   }
 );
+
+export { router as showPostRouter}

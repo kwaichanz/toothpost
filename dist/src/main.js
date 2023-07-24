@@ -39,14 +39,33 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
+const cors_1 = __importDefault(require("cors"));
+const routers_1 = require("./routers");
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)({ origin: "*", optionsSuccessStatus: 200 }));
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use(express_1.default.json());
+app.use(routers_1.newPostRouter);
+app.use(routers_1.deletePostRouter);
+app.use(routers_1.updatePostRouter);
+app.use(routers_1.showPostRouter);
+app.use(routers_1.newCommentRouter);
+app.use(routers_1.deleteCommentRouter);
+app.all("*", (req, res, next) => {
+    const error = new Error("not found!");
+    error.status = 404;
+    next(error);
+});
+app.use((error, req, res, next) => {
+    if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+    }
+    return res.status(500).json({ message: "something went wrong" });
+});
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Starting up...");
     if (!process.env.MONGO_URI)
         throw new Error("MONGO_URI must be defined");
-    console.log(process.env.MONGO_URI);
     console.log("Connecting to MongoDB...");
     try {
         yield mongoose_1.default.connect(process.env.MONGO_URI);
