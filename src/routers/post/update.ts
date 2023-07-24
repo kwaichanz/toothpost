@@ -8,7 +8,6 @@ router.post(
   "/api/post/update/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-
     const { content, title } = req.body;
 
     if (!id) {
