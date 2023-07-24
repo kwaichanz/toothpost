@@ -4,10 +4,10 @@ import Post from "../../models/post";
 
 const router = Router();
 
-router.get(
-  "/api/post/show/:id",
+router.post(
+  "/api/post/show",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+    const { id } = req.body;
 
     if (!id) {
       const allPost = await Post.find();
