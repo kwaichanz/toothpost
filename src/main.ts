@@ -4,6 +4,7 @@ dotenv.config();
 import express, { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import cookieSession from "cookie-session";
 
 import {
   newPostRouter,
@@ -18,8 +19,16 @@ const app = express();
 
 app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 
+app.set("trust proxy", true);
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(
+  cookieSession({
+    signed: false,
+    secure: false,
+  })
+);
 
 app.use(newPostRouter);
 app.use(deletePostRouter);
@@ -53,7 +62,9 @@ app.use(
 
 const start = async () => {
   console.log("Starting up...");
-  if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined");
+  if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined!");
+  
+  if (!process.env.JWT_KEY) throw new Error("JWT_KEY is required!")
   console.log("Connecting to MongoDB...");
   try {
     await mongoose.connect(process.env.MONGO_URI);

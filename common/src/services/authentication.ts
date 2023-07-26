@@ -18,3 +18,5 @@ export class Authentication {
     return buf.toString("hex") === hashedPassword;
   }
 }
+
+export const authenticationService = new Authentication();
