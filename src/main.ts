@@ -13,7 +13,12 @@ import {
   showPostRouter,
   newCommentRouter,
   deleteCommentRouter,
+  signupRouter,
+  signinRouter,
+  currentUserRouter,
 } from "./routers";
+import { currentUser, requireAuth } from "common";
+import { signoutRouter } from "./routers/auth/signout";
 
 const app = express();
 
@@ -30,13 +35,20 @@ app.use(
   })
 );
 
-app.use(newPostRouter);
-app.use(deletePostRouter);
-app.use(updatePostRouter);
+app.use(currentUser);
+
+app.use(signupRouter);
+app.use(signinRouter);
+app.use(currentUserRouter);
+app.use(signoutRouter);
+
+app.use(requireAuth, newPostRouter);
+app.use(requireAuth, deletePostRouter);
+app.use(requireAuth, updatePostRouter);
 app.use(showPostRouter);
 
-app.use(newCommentRouter);
-app.use(deleteCommentRouter);
+app.use(requireAuth, newCommentRouter);
+app.use(requireAuth, deleteCommentRouter);
 
 app.all("*", (req, res, next) => {
   const error = new Error("not found!") as CustomError;
@@ -63,8 +75,8 @@ app.use(
 const start = async () => {
   console.log("Starting up...");
   if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined!");
-  
-  if (!process.env.JWT_KEY) throw new Error("JWT_KEY is required!")
+
+  if (!process.env.JWT_KEY) throw new Error("JWT_KEY is required!");
   console.log("Connecting to MongoDB...");
   try {
     await mongoose.connect(process.env.MONGO_URI);
