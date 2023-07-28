@@ -7,3 +7,4 @@ export abstract class CustomError extends Error {
 
   abstract generateErrors(): { message: string; field?: string }[]
 }
+ 
