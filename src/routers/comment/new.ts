@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import Comment from "../../models/comment";
 import Post from "../../models/post";
+import { BadRequestError } from "../../../common";
 
 const router = Router();
 
@@ -11,10 +12,7 @@ router.post(
     const { userName, content } = req.body;
 
     if (!content) {
-      const error = new Error("content is required") as CustomError;
-      error.status = 400;
-
-      return next(error);
+      next(new BadRequestError("content is required"));
     }
 
     const newComment = new Comment({
@@ -23,7 +21,7 @@ router.post(
     });
 
     await newComment.save();
-    
+
     const updatedPost = await Post.findOneAndUpdate(
       { _id: postId },
       { $push: { comments: newComment } },

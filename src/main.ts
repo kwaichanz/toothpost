@@ -17,7 +17,12 @@ import {
   signinRouter,
   currentUserRouter,
 } from "./routers";
-import { currentUser, requireAuth } from "common";
+import {
+  currentUser,
+  errorHandler,
+  requireAuth,
+  NotFoundError,
+} from "../common";
 import { signoutRouter } from "./routers/auth/signout";
 
 const app = express();
@@ -51,25 +56,24 @@ app.use(requireAuth, newCommentRouter);
 app.use(requireAuth, deleteCommentRouter);
 
 app.all("*", (req, res, next) => {
-  const error = new Error("not found!") as CustomError;
-  error.status = 404;
-  next(error);
+  next(new NotFoundError());
 });
 
-declare global {
-  interface CustomError extends Error {
-    status?: number;
-  }
-}
+// declare global {
+//   interface CustomError extends Error {
+//     status?: number;
+//   }
+// }
 
 app.use(
-  (error: CustomError, req: Request, res: Response, next: NextFunction) => {
-    if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    }
+  errorHandler
+  // (error: CustomError, req: Request, res: Response, next: NextFunction) => {
+  //   if (error.status) {
+  //     return res.status(error.status).json({ message: error.message });
+  //   }
 
-    return res.status(500).json({ message: "something went wrong" });
-  }
+  //   return res.status(500).json({ message: "something went wrong" });
+  // }
 );
 
 const start = async () => {

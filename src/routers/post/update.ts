@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 
 import Post from "../../models/post";
+import { BadRequestError } from "../../../common";
 
 const router = Router();
 
@@ -11,17 +12,11 @@ router.post(
     const { content, title } = req.body;
 
     if (!id) {
-      const error = new Error("post id is required") as CustomError;
-      error.status = 400;
-
-      next(error);
+      return next(new BadRequestError("post id is required"));
     }
 
     if (!content || !title) {
-      const error = new Error("content and title are required") as CustomError;
-      error.status = 400;
-
-      next(error);
+      return next(new BadRequestError("content and title are required"));
     }
 
     let updatedPost;
@@ -33,10 +28,7 @@ router.post(
         { new: true }
       );
     } catch (err) {
-      const error = new Error("post cannot be updated") as CustomError;
-      error.status = 400;
-
-      next(error);
+      return next(new BadRequestError("post cannot be updated"));
     }
 
     res.status(201).send(updatedPost);

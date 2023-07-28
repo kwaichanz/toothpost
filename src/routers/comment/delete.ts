@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import Post from "../../models/post";
 import Comment from "../../models/comment";
+import { BadRequestError } from "../../../common";
 
 const router = Router();
 
@@ -10,12 +11,7 @@ router.delete(
     const { commentId, postId } = req.params;
 
     if (!postId || !commentId) {
-      const error = new Error(
-        "post id and comment id are required"
-      ) as CustomError;
-      error.status = 400;
-
-      next(error);
+      next(new BadRequestError("post id and comment id are required"));
     }
 
     try {
@@ -29,12 +25,11 @@ router.delete(
         { _id: postId },
         { $pull: { comments: commentId } }
       );
-      
+
       res.status(200).json({ success: true });
     } catch (err) {
       next(new Error("post cannot be updated"));
     }
-
   }
 );
 
