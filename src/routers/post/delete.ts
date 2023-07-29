@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import Post from "../../models/post";
+import { User, UserDoc } from "../../models/user";
 import { BadRequestError } from "../../../common";
 
 const router = Router();
@@ -18,8 +19,15 @@ router.delete(
     } catch (err) {
       next(new Error("post cannot be deleted!"));
     }
+    const user = await User.findOneAndUpdate(
+      { id: req.currentUser!.userId },
+      { $pull: { posts: id } },
+      { new: true }
+    );
 
-    res.status(200).json({ success: true });
+    if (!user) return next(new Error());
+    
+    res.status(200).json(user);
   }
 );
 
