@@ -10,16 +10,14 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
 
-    if (!email || !password) return next(new BadRequestError("email and password are required"));
+    if (!email || !password)
+      return next(new BadRequestError("email and password are required"));
 
     const user = await User.findOne({ email });
 
     if (user) return next(new BadRequestError("the email is already exist"));
 
-    const newUser = new User({
-      email,
-      password,
-    });
+    const newUser = User.build({ email, password });
 
     await newUser.save();
 
