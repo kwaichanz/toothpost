@@ -1,14 +1,30 @@
 import { Router, Request, Response, NextFunction } from "express";
 import Post from "../../models/post";
 import { User } from "../../models/user";
-import { BadRequestError, uploadImages } from "../../../common";
+import { BadRequestError, uploadImages, validationRequest } from "../../../common";
 import fs from "fs";
 import path from "path";
+import { body } from "express-validator";
 
 const router = Router();
 
 router.post(
   "/api/post/new",
+  [
+    body("title")
+      .not()
+      .isEmpty()
+      .isString()
+      .isLength({ max: 20 })
+      .withMessage("a valid title is required"),
+
+    body("content")
+      .not()
+      .isEmpty()
+      .isString()
+      .withMessage("a valid content is required"),
+  ],
+  validationRequest,
   uploadImages,
   async (req: Request, res: Response, next: NextFunction) => {
     const { title, content } = req.body;
@@ -23,9 +39,9 @@ router.post(
       images = req.files ? [...req.files] : [];
     }
 
-    if (!title || !content) {
-      return next(new BadRequestError("title and content are required"));
-    }
+    // if (!title || !content) {
+    //   return next(new BadRequestError("title and content are required"));
+    // }
 
     const newPost = Post.build({
       title,
