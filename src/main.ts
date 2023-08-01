@@ -11,6 +11,8 @@ import {
   deletePostRouter,
   updatePostRouter,
   showPostRouter,
+  addImagesRouter,
+  deleteImagesRouter,
   newCommentRouter,
   deleteCommentRouter,
   signupRouter,
@@ -50,6 +52,8 @@ app.use(signoutRouter);
 app.use(requireAuth, newPostRouter);
 app.use(requireAuth, deletePostRouter);
 app.use(requireAuth, updatePostRouter);
+app.use(requireAuth, addImagesRouter);
+app.use(requireAuth, deleteImagesRouter);
 app.use(showPostRouter);
 
 app.use(requireAuth, newCommentRouter);
